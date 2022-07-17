@@ -1,0 +1,97 @@
+﻿@page
+@model Book.Pages.User.theloai.indexModel
+
+@{
+	ViewData["Title"] = "Danh Sách Thể Loại";
+}
+<h1>Danh Sách Thể Loại</h1>
+<hr />
+@if (TempData["Success"] != null)
+{
+	<p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+}
+@if (TempData["Error"] != null)
+{
+	<p class="alert alert-danger" id="successMessage">@TempData["Error"]</p>
+}
+<div class="row">
+	<div class="col-md-4">
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="form-group">
+			<label asp-for="The_Loais.ten_the_loai" class="control-label">Tên Thể Loại</label>
+			<input asp-for="The_Loais.ten_the_loai" class="form-control" />
+			<span asp-validation-for="The_Loais.ten_the_loai" class="text-danger"></span>
+		</div>
+		<div class="form-group">
+			<input onclick="submit()" value="Create" class="btn btn-primary" />
+		</div>
+	</div>
+</div>
+
+<div id="load_loai"></div>
+
+@section Scripts {
+	@{
+	await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+<script>
+	load_loai();
+	function load_loai() {
+		$.ajax({
+			type: 'get',
+			url: '/User/theloai/list',
+			success: function(msg) {
+				$('#load_loai').empty().append(msg);
+			},
+			error: function(xhr, status, error) {
+				alert(xhr.responseText);
+			}
+		});
+	};
+	function submit(){
+		var name = $("#The_Loais_ten_the_loai")[0].value;
+		if(name == ""){
+			toastr.error('Vui Lòng Nhập Tên Thể Loại !', 'Error');
+		}
+		else {
+			$.ajax({
+			  type: 'POST',
+			  data: { name: name },
+			  url: "/user/theloai",
+			  success: function(response) {
+				  if (response.status == 0) {
+					  toastr.error('Tên Thể Loại Bị Trùng !', 'Error');
+				  } else if(response.status == 1) {
+					  toastr.success('Thêm Thể Loại Thành Công !', 'Success');
+					  $("#The_Loais_ten_the_loai")[0].value = "";
+					  load_loai();
+				  }
+				  else {
+					  toastr.error('Lỗi Không Thể Thêm !', 'Error');
+				  }
+			  },
+		  });
+		}
+	}
+	function delete_theloai(id){
+		if (confirm("Bạn Có Muốn Xóa Thể Loại!") == true) {
+			$.ajax({
+				type: 'POST',
+				data: { id: id },
+				url: "/User/theloai?handler=AsyncDelete",
+				success: function(response) {
+				  if (response.status == 0) {
+					  toastr.error('Không Tìn Thấy Thể loại để Xóa !', 'Error');
+				  } else if(response.status == 1) {
+					  toastr.success('Xóa Thể Loại Thành Công !', 'Success');
+					  $("#"+id).remove();
+				  }
+				  else {
+					  toastr.error('Lỗi Không Thể Thêm !', 'Error');
+				  }
+				},
+			});
+		}
+	}
+</script>
+}

@@ -1,0 +1,120 @@
+﻿@page
+@model Book.Pages.User.IndexModel
+<h1>Quản Lý Tài Khoản</h1>
+<hr />
+<div class="table-responsive">
+	@if (@Model.users != null && @Model.users.Any())
+	{
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">STT</th>
+					<th scope="col">Email-Tài Khoản</th>
+					<th scope="col">Lựa Chọn</th>
+				</tr>
+				@{
+					int i = 1;
+				}
+				@foreach (var user in Model.users)
+				{
+					<tr>
+						<th scope="row">@i</th>
+						<td scope="row">@user.Email</td>
+						<td scope="row">
+							<button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@user.Email" data-id="@user.Id">Chỉnh Sửa</button>
+						</td>
+					</tr>
+					i++;
+				}
+			</thead>
+		</table>
+	}
+</div>
+<div class="text-center">
+</div>
+@*..show modal*@
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Chỉnh Sửa Trạng Thái</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label for="recipient-name" class="col-form-label"></label>
+					<input type="text" class="form-control" id="recipient-name" disabled>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" onchange="update();" id="User" name="User" value="User">
+					<label for="vehicle1"> User</label><br>
+					<input type="checkbox" onchange="update();" id="Administrator" name="Administrator" value="Administrator">
+					<label for="vehicle2"> Admin</label><br>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	let id_user;
+	$('#exampleModal').on('show.bs.modal', function (event) {
+	  document.getElementById('User').checked = false;
+	  document.getElementById('Administrator').checked = false;
+	  var button = $(event.relatedTarget)
+	  var email = button.data('whatever')
+	  id_user = button.data('id');
+	  $.ajax({
+				type: "POST",
+				url: "./User?handler=find",
+				dataType: "json",
+				data: {
+					id: id_user,
+				},
+				success: function(response) {
+					if(response.userRoles.length == 2){
+						document.getElementById('User').checked = true;
+						document.getElementById('Administrator').checked = true;
+					}
+					else if(response.userRoles.length == 1){
+						var check = response.userRoles[0];
+						document.getElementById(check).checked = true;
+					}
+				}
+
+			});
+	  var modal = $(this)
+	  //modal.find('.modal-title').text('New message to ' + recipient)
+	  modal.find('.modal-body input').val(email)
+
+	})
+	function update(){
+		var check_user = document.getElementById('User').checked;
+		var check_admin = document.getElementById('Administrator').checked;
+		console.log(check_user,check_admin);
+		$.ajax({
+				type: "POST",
+				url: "./User?handler=update",
+				dataType: "json",
+				data: {
+					id: id_user,
+					User : check_user,
+					Administrator : check_admin
+				},
+				success: function(response) {
+					if(response.status == true){
+						 toastr.success('Cập Nhật Role Thành Công! !', 'Success');
+					}else{
+						 toastr.error('Lỗi Cập Nhật! !', 'Error');
+
+					}
+				}
+
+		});
+	}
+</script>

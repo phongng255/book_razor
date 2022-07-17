@@ -1,0 +1,16 @@
+﻿@page
+@model Book.Areas.Identity.Pages.Account.xacnhanModel
+
+@{
+}
+<h1>Vui lòng điền mã OTP để đăng nhập !</h1>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<hr/>
+<form method="post">
+	<label>Mã OTP Của Bạn</label>
+	<input name="otp" />
+	<br />
+	<input type="submit" onclick="return error();" value="Kiểm Tra" class="btn btn-primary btn-lg" />
+	<br />
+	
+</form>

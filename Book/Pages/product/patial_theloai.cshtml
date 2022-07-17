@@ -1,0 +1,11 @@
+﻿@page
+@model Book.Pages.product.patial_theloaiModel
+@{
+	Layout = null;
+}
+
+@foreach (var item in Model.the_Loais)
+{
+	//href="/product?id=@item.id"
+	<a  class="dropdown-item" onclick="category(`@item.id`)" href="javascript:void(0);">@item.ten_the_loai</a>
+}

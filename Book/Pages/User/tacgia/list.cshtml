@@ -1,0 +1,60 @@
+﻿@page
+@model Book.Pages.User.tacgia.listModel
+
+@{
+	ViewData["Title"] = "list";
+	Layout = null;
+}
+<div class="container">
+	<table id="example" class="table table-striped table-bordered" style="width:100%">
+		<thead>
+			<tr>
+				<th scope="col">ID</th>
+				<th scope="col">Tên Thể Loại</th>
+				<th scope="col">Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model.Tacgia)
+			{
+				<tr id="@item.id">
+					<th scope="row">@item.id</th>
+					<th scope="row">@item.ten_tg</th>
+					<td scope="row">
+						<a href="user/theloai/edit?id=@item.id" class="btn btn-primary" type="button" >Chỉnh Sửa</a>
+						<button type="button" onclick="delete_tacgia(`@item.id`)" class="btn btn-danger">Xóa</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script>
+	$(document).ready(function() {
+	// Cấu hình các nhãn phân trang
+		$('#example').dataTable( {
+			"language": {
+			"sProcessing":   "Đang xử lý...",
+			"sLengthMenu":   "Xem _MENU_ mục",
+			"sZeroRecords":  "Không tìm thấy dòng nào phù hợp",
+			"sInfo":         "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+			"sInfoEmpty":    "Đang xem 0 đến 0 trong tổng số 0 mục",
+			"sInfoFiltered": "(được lọc từ _MAX_ mục)",
+			"sInfoPostFix":  "",
+			"sSearch":       "Tìm:",
+			"sUrl":          "",
+			"oPaginate": {
+				"sFirst":    "Đầu",
+				"sPrevious": "Trước",
+				"sNext":     "Tiếp",
+				"sLast":     "Cuối"
+				}
+			},
+			"processing": true, // tiền xử lý trước
+			"aLengthMenu": [[5, 10, 20, 50], [5, 10, 20, 50]], // danh sách số trang trên 1 lần hiển thị bảng
+			"order": [[ 1, 'desc' ]] //sắp xếp giảm dần theo cột thứ 1
+		} );
+	} );
+</script>

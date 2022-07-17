@@ -1,0 +1,63 @@
+﻿@page
+@model Book.Pages.User.book.editModel
+
+@{
+	ViewData["Title"] = "edit";
+}
+
+<h1>edit</h1>
+
+<h4>_Book</h4>
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form method="post" enctype="multipart/form-data">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="_Book.TenSach" class="control-label"></label>
+				<input asp-for="_Book.TenSach" class="form-control" />
+				<span asp-validation-for="_Book.TenSach" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="_Book.the_loaiId" class="control-label"></label>
+				<select asp-for="_Book.the_loaiId" class="form-control" asp-items="ViewBag.the_loaiId"></select>
+			</div>
+			<div class="form-group">
+				<label asp-for="_Book.tacgiaId" class="control-label"></label>
+				<select asp-for="_Book.tacgiaId" class="form-control" asp-items="ViewBag.tacgiaId"></select>
+			</div>
+			<div class="form-group">
+				<label asp-for="@Model.File_img">Hình Ảnh</label>
+				<br />
+				<img id="File_img" src="~/uploads/@Model._Book.img" style="max-width: 20%;" />
+				<input asp-for="@Model.File_img"   onchange="loadFile_img(event)" class="form-control" accept="image/gif, image/jpeg"/>
+				<span asp-validation-for="@Model.File_img" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="@Model.File_PDF">File PDF</label>
+				<br />
+				<label>==>@Model._Book.file_name</label>
+				<input asp-for="@Model.File_PDF" class="form-control" value="_Book.file_name"  accept="application/pdf, application/vnd.ms-excel" />
+				<span asp-validation-for="@Model.File_PDF" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<input type="submit" value="Create" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</div>
+
+<div>
+	<a asp-page="/User/book/add_book">Back to List</a>
+</div>
+<script>
+		var loadFile_img = function(event) {
+	  var reader = new FileReader();
+	  reader.onload = function(){
+		var output = document.getElementById('File_img');
+		output.src = reader.result;
+	  };
+	  reader.readAsDataURL(event.target.files[0]);
+	};
+</script>

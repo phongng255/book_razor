@@ -1,0 +1,26 @@
+﻿@page
+@model GenerateRecoveryCodesModel
+@{
+    ViewData["Title"] = "Generate two-factor authentication (2FA) recovery codes";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+<h3>Mã Khôi Phục</h3>
+<div class="alert alert-warning" role="alert">
+    <p>
+        <span class="glyphicon glyphicon-warning-sign"></span>
+        <strong>Đặt lại Mã.</strong>
+    </p>
+    <p>
+        Nếu bạn bị mất thiết bị và không có mã khôi phục, bạn sẽ mất quyền truy cập vào tài khoản của mình.
+    </p>
+    <p>
+        Việc tạo mã khôi phục mới không thay đổi các khóa được sử dụng trong ứng dụng xác thực. Nếu bạn muốn thay đổi khóa được sử dụng trong ứng dụng xác thực, bạn nên <a asp-page="./ResetAuthenticator">đặt lại các khóa xác thực của .</a>
+    </p>
+</div>
+<div>
+    <form method="post">
+        <button class="btn btn-danger" type="submit">Tạo mã khôi phục</button>
+    </form>
+</div>

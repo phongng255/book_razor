@@ -1,0 +1,48 @@
+﻿@page
+@model Book.Pages.product.partial_bookModel
+
+@{
+	Layout = null;
+}
+<h1>Chào Mừng Đến Với Thư Viện Sách</h1>
+
+<div class="container">
+	<div class="row clearfix">
+		@if (Model._Book != null)
+		{
+			@foreach (var item in Model._Book)
+			{
+				<div class="col-lg-3 col-md-4 col-sm-12">
+					<div class="card product_item">
+						<div class="body">
+							<div class="cp_img">
+								<img src="~/uploads/@item.img" alt="Product" class="img-fluid img-thumbnail">
+								@*<img src="@item.img" alt="Product" class="img-fluid">*@
+								<div class="hover">
+									@if (@Model.withlists.Where(x => x.bookId == @item.Id).FirstOrDefault() == null)
+									{
+										<a href="javascript:void(0);" id="status-@item.Id" onclick="withlist(@item.Id)" class="btn btn-primary btn-sm waves-effect">Theo Dõi</a>
+									}
+									else
+									{
+										<a href="javascript:void(0);" id="status-@item.Id" onclick="withlist(@item.Id)" class="btn btn-danger btn-sm waves-effect">Bỏ Theo Dõi</a>
+									}
+									<a href="javascript:void(0);" onclick="pdf(`@item.file_name`)" class="btn btn-primary btn-sm waves-effect">Xem</a>
+								</div>
+							</div>
+							<div class="product_details">
+								<h5 class="crop" title="@item.TenSach"><a  href="/product/Details?id=@item.Id">@item.TenSach</a></h5>
+								<ul class="product_price list-unstyled">
+									<li class="old_price">Tác Giả: @item.Tacgia.ten_tg</li>
+								</ul>
+								<ul class="product_price list-unstyled">
+									<li class="new_price">Thể Loại: @item.The_Loai.ten_the_loai</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		}
+	</div>
+</div>

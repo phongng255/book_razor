@@ -1,0 +1,77 @@
+﻿@page
+@model Book.Pages.product.DetailsModel
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+<link rel="stylesheet" href="~/css//detail.css" asp-append-version="true" />
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container">
+	<div class="card">
+		<div class="container-fliud">
+			<div class="wrapper row">
+				<div class="preview col-md-6">
+					<div class="preview-pic tab-content">
+						<div class="tab-pane active" id="pic-1"><img src="~/uploads/@Model.product.img" /></div>
+						<div class="tab-pane" id="pic-2"><img src="~/uploads/@Model.product.img" /></div>
+						<div class="tab-pane" id="pic-3"><img src="~/uploads/@Model.product.img" /></div>
+						<div class="tab-pane" id="pic-4"><img src="~/uploads/@Model.product.img" /></div>
+					</div>
+					<ul class="preview-thumbnail nav nav-tabs">
+						<li class="active"><a data-target="#pic-1" data-toggle="tab"><img src="~/uploads/@Model.product.img" /></a></li>
+						<li><a data-target="#pic-2" data-toggle="tab"><img src="~/uploads/@Model.product.img" /></a></li>
+						<li><a data-target="#pic-3" data-toggle="tab"><img src="~/uploads/@Model.product.img" /></a></li>
+						<li><a data-target="#pic-4" data-toggle="tab"><img src="~/uploads/@Model.product.img" /></a></li>
+					</ul>
+				</div>
+				<div class="details col-md-6">
+					<h3 class="product-title">@Model.product.TenSach</h3>
+					<div class="rating">
+						<span class="review-no"><i class="fas fa-eye"></i> 41 reviews</span>
+					</div>
+					<p>Tác Giả : @Model.product.Tacgia.ten_tg</p>
+					<p>Nhà Xuất Bản: @Model.product.Tacgia.ten_tg</p>
+					<p>Hình Thức: File PDF</p>
+					<hr />
+					<div class="action">
+						<form method="post" action="./product/Details?handler=Download">
+							<button class="add-to-cart btn btn-default" onclick="pdf(`@Model.product.file_name`)" type="button">Xem Online</button>
+							@if (@Model.withlists.Where(x => x.bookId == @Model.product.Id).FirstOrDefault() == null)
+							{
+								<button class="like btn btn-default" id="@Model.product.Id" onclick="add_withList(@Model.product.Id)" type="button"><span class="fa fa-heart"></span></button>
+							}
+							else
+							{
+								<button class="like btn btn-default" style="background-color:red;" id="@Model.product.Id" onclick="add_withList(@Model.product.Id)" type="button"><span class="fa fa-heart"></span></button>
+							}
+							<button class="like btn btn-default" name="file" value="@Model.product.file_name" type="submit"><span class="fa fa-download"></span></button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	function add_withList(id_book) {
+		$.ajax({
+			type: "POST",
+			url: "./product?handler=With_list",
+			dataType: "json",
+			data: {
+				id: id_book,
+			},
+			success: function(response) {
+				if (response.status == 1) {
+					document.getElementById(id_book).style.backgroundColor = "red";
+					toastr.success('Thêm Danh Sách Yêu Thích Thành Công!', 'Success');
+				}
+				else if (response.status == 0) {
+					document.getElementById(id_book).style.backgroundColor = "";
+					toastr.warning('Bỏ Chọn Danh Sách Yêu Thích', 'Warning');
+				}
+				else toastr.error('Vui Lòng Đăng Nhập !', 'Error');
+			}
+		});
+	}
+</script>

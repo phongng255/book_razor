@@ -1,0 +1,65 @@
+﻿@page
+@model Book.Pages.product.withlistModel
+@{
+}
+<div id="partialView">
+	@if (Model.withlists != null)
+	{
+		<h1>Danh Sách Ưa Thích Của Bạn</h1>
+		<div class="container">
+			<div class="row clearfix">
+				@foreach (var item in Model.withlists)
+				{
+					<div class="col-lg-3 col-md-4 col-sm-12" id="@item.Book.Id">
+						<div class="card product_item">
+							<div class="body">
+								<div class="cp_img">
+									<img src="~/uploads/@item.Book.img" alt="Product" class="img-fluid img-thumbnail">
+									@*<img src="@item.img" alt="Product" class="img-fluid">*@
+									<div class="hover">
+										<a href="javascript:void(0);" onclick="withlist_remove(@item.Book.Id)" class="btn btn-danger btn-sm waves-effect"> Bỏ Theo Dõi</a>
+										<a href="javascript:void(0);" onclick="pdf(`@item.Book.file_name`)" class="btn btn-primary btn-sm waves-effect">Xem</a>
+									</div>
+								</div>
+								<div class="product_details">
+									<h5 class="crop" title="@item.Book.TenSach"><a  href="/product/Details?id=@item.Book.Id">@item.Book.TenSach</a></h5>
+									<ul class="product_price list-unstyled">
+										<li class="old_price">Tác Giả: @item.Book.Tacgia.ten_tg</li>
+									</ul>
+									<ul class="product_price list-unstyled">
+										<li class="new_price">Thể Loại: @item.Book.The_Loai.ten_the_loai</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	}
+	else
+	{
+		<h1>Bạn Chưa Yêu Thích Quyển Sách Nào</h1>
+	}
+</div>
+<script type="text/javascript">
+	function withlist_remove(id_book){
+		$.ajax({
+			type: "POST",
+			url: "./product?handler=With_list",
+			dataType: "json",
+			data: {
+				 id: id_book,
+			},
+			success: function(response) {
+				if (response.status == true) {
+					toastr.success('Thêm Danh Sách Yêu Thích Thành Công!', 'Success');
+				}
+				else {
+					$("#"+id_book).remove();
+					toastr.warning('Bỏ Chọn Danh Sách Yêu Thích', 'Warning');
+				}
+			}
+		});
+	}
+</script>

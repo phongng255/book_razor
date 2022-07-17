@@ -1,0 +1,246 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Book.Areas.Identity.Data
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+	bool check = false;
+	if (User.Identity.Name != null)
+	{
+
+		var user = await UserManager.FindByEmailAsync(User.Identity.Name);
+		var userRolesInDb = await UserManager.GetRolesAsync(user);
+		foreach (var item in userRolesInDb)
+		{
+			if (item == "Administrator")
+			{
+				check = true;
+			}
+		}
+
+	}
+
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - Book</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
+	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/product.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/Book.styles.css" asp-append-version="true" />
+	<script src="https://kit.fontawesome.com/e35fa150f6.js" crossorigin="anonymous"></script>
+	<style>
+		.searchbar {
+			margin-bottom: auto;
+			margin-top: auto;
+			height: 60px;
+			background-color: #353b48;
+			border-radius: 30px;
+			padding: 10px;
+		}
+
+		.search_input {
+			color: white;
+			border: 0;
+			outline: 0;
+			background: none;
+			width: 0;
+			caret-color: transparent;
+			line-height: 40px;
+			transition: width 0.4s linear;
+		}
+
+		.searchbar:hover > .search_input {
+			padding: 0 10px;
+			width: 270px;
+			caret-color: red;
+			transition: width 0.4s linear;
+		}
+
+		.searchbar:hover > .search_icon {
+			background: white;
+			color: #e74c3c;
+		}
+
+		.search_icon {
+			height: 40px;
+			width: 40px;
+			float: right;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border-radius: 50%;
+			color: white;
+			text-decoration: none;
+		}
+	</style>
+
+</head>
+<body>
+	<header>
+		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+			<div class="container">
+				<a class="navbar-brand" asp-area="" asp-page="/Index">Book</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+						aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+					<ul class="navbar-nav flex-grow-1">
+						<li class="nav-item">
+							<a href="/product/withlist" class="nav-link text-dark">Danh Sách Yêu Thích</a>
+						</li>
+						<li class="dropdown">
+							<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								Thể Loại
+							</button>
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="load">
+							</div>
+						</li>
+					</ul>
+				</div>
+				@if (check == true)
+				{
+					<div class="dropdown" id="admin">
+						<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							quản lý
+						</button>
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="load">
+							<a class="dropdown-item" href="/User">Quản Lý Thành Chức Vụ</a>
+							<a class="dropdown-item" href="/User/book/add_book">Quản Lý Thư Viện Sách</a>
+							<a class="dropdown-item" href="/User/theloai/">Quản Lý Thể Loại</a>
+								<a class="dropdown-item" href="/User/tacgia/">Quản Lý Tác Giả</a>
+						</div>
+					</div>
+				}
+				@* @await Html.PartialAsync("~/Pages/Shared/demo.cshtml")*@
+				<partial name="_LoginPartial" />
+			</div>
+		</nav>
+	</header>
+	<div class="container">
+		<main role="main" class="pb-3">
+			@RenderBody()
+		</main>
+	</div>
+	@*<footer class="border-top footer text-muted">
+		<div class="container">
+		&copy; 2022 - Book - <a asp-area="" asp-page="/Privacy">Privacy</a>
+		</div>
+		</footer>*@
+	<script type="text/javascript">
+
+		load();
+		function load() {
+
+			$.ajax({
+				type: 'get',
+				url: '/product/patial_theloai',
+				success: function(msg) {
+					$('#load').empty().append(msg);
+				},
+				error: function(xhr, status, error) {
+					alert(xhr.responseText);
+				}
+			});
+			//$("#_LoginPartial").load('@Url.Content("/product/patial_theloai")');
+		};
+		function category(id) {
+			$.ajax({
+				type: 'get',
+				url: '/product?id=' + id,
+				success: function(msg) {
+					$('#partialView').empty().append(msg);
+				},
+				error: function(xhr, status, error) {
+					//alert(xhr.responseText);
+				}
+			});
+		}
+		function abc(){
+			var key = document.getElementById("search").value;
+			if(key != ""){
+				$.ajax({
+				type: 'get',
+				url: '/product/find?key=' + key,
+				success: function(msg) {
+					$('#partialView').empty().append(msg);
+				},
+					error: function(xhr, status, error) {
+
+					}
+				});
+			}else{
+				$("#partialView").load('@Url.Content("/product/partial_book")');
+			}
+		}
+	</script>
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="~/lib/qrcode.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+	<base href="/" />
+	<script type="text/javascript">
+		function withlist(id_book) {
+			$.ajax({
+				type: "POST",
+				url: "./product?handler=With_list",
+				dataType: "json",
+				data: {
+					id: id_book,
+				},
+				success: function(response) {
+					if (response.status == 1) {
+						toastr.success('Thêm Danh Sách Yêu Thích Thành Công!', 'Success');
+						$("#status-" + id_book).get(0).className = "btn btn-danger btn-sm waves-effect";
+						$("#status-" + id_book).get(0).innerHTML = "Bỏ Theo Dõi";
+					}
+					else if (response.status == 0) {
+						//$("#"+id_book).remove();
+						toastr.warning('Bỏ Chọn Danh Sách Yêu Thích', 'Warning');
+						$("#status-" + id_book).get(0).className = "btn btn-primary btn-sm waves-effect";
+						$("#status-" + id_book).get(0).innerHTML = "Theo Dõi";
+					}
+					else toastr.error('Vui Lòng Đăng Nhập !', 'Error');
+				}
+			});
+		}
+	</script>
+	<script>
+		function pdf(name) {
+			$.ajax({
+				type: 'POST',
+				data: { fileName: name },
+				url: "/product?handler=Show_pdf",
+				success: function(response) {
+					if (response.status == false) {
+						toastr.error('Vui Lòng Đăng Nhập !', 'Error');
+					} else {
+						toastr.success('Đang Tải File PDF !', 'Success');
+						setTimeout(() => { window.open("product/demo?path=" + response.file, "_blank") }, 2000)
+					}
+				},
+			});
+		}
+	</script>
+
+</body>
+</html>

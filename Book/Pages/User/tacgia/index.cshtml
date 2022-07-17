@@ -1,0 +1,89 @@
+﻿@page
+@model Book.Pages.User.tacgia.indexModel
+
+@{
+	ViewData["Title"] = "index";
+}
+
+<h1>Quản Lý Tác Giả</h1>
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="form-group">
+			<label asp-for="Tacgia.ten_tg" class="control-label">Tên Tác Giả</label>
+			<input asp-for="Tacgia.ten_tg" class="form-control" />
+			<span asp-validation-for="Tacgia.ten_tg" class="text-danger"></span>
+		</div>
+		<div class="form-group">
+			<input onclick="submit()" value="Thêm Tác Giả" class="btn btn-primary" />
+		</div>
+	</div>
+</div>
+
+<div id="load_tacgia"></div>
+@section Scripts {
+	@{
+	await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+<script>
+	load_tacgia();
+	function load_tacgia() {
+		$.ajax({
+			type: 'get',
+			url: '/User/tacgia/list',
+			success: function(msg) {
+				$('#load_tacgia').empty().append(msg);
+			},
+			error: function(xhr, status, error) {
+				alert(xhr.responseText);
+			}
+		});
+	};
+	function submit(){
+		var name = $("#Tacgia_ten_tg")[0].value;
+		if(name == ""){
+			toastr.error('Vui Lòng Nhập Tên Thể Loại !', 'Error');
+		}
+		else {
+			$.ajax({
+			  type: 'POST',
+			  data: { name: name },
+			  url: "/user/tacgia",
+			  success: function(response) {
+				  if (response.status == 0) {
+					  toastr.error('Tên Thể Loại Bị Trùng !', 'Error');
+				  } else if(response.status == 1) {
+					  toastr.success('Thêm Thể Loại Thành Công !', 'Success');
+					  $("#Tacgia_ten_tg")[0].value = "";
+					  load_tacgia();
+				  }
+				  else {
+					  toastr.error('Lỗi Không Thể Thêm !', 'Error');
+				  }
+			  },
+		  });
+		}
+	}
+	function delete_tacgia(id){
+		if (confirm("Bạn Có Muốn Xóa Thể Loại!") == true) {
+			$.ajax({
+				type: 'POST',
+				data: { id: id },
+				url: "/User/tacgia?handler=AsyncDelete",
+				success: function(response) {
+				  if (response.status == 0) {
+					  toastr.error('Không Tìn Thấy Thể loại để Xóa !', 'Error');
+				  } else if(response.status == 1) {
+					  toastr.success('Xóa Thể Loại Thành Công !', 'Success');
+					  $("#"+id).remove();
+				  }
+				  else {
+					  toastr.error('Lỗi Không Thể Thêm !', 'Error');
+				  }
+				},
+			});
+		}
+	}
+</script>
+}
